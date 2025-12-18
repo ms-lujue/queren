@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <title>确认表下载（身份证后6位）</title>
+  <style>
+    body { font-family: "Microsoft YaHei", sans-serif; margin: 40px; }
+    label, input, button { font-size: 16px; }
+    #msg { color: red; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>确认表下载</h2>
+  <p>
+    <label for="id6">请输入本人身份证号后6位：</label>
+    <input type="text" id="id6" maxlength="6">
+    <button onclick="downloadForm()">下载</button>
+  </p>
+  <div id="msg"></div>
+
+  <!-- 用于触发浏览器下载的隐藏链接 -->
+  <a id="hidden-download-link" style="display:none;"></a>
+
+  <script>
+    function downloadForm() {
+      var id6 = document.getElementById('id6').value.trim();
+      var msg = document.getElementById('msg');
+      var link = document.getElementById('hidden-download-link');
+
+      if (!id6) {
+        msg.textContent = "请先输入身份证后6位";
+        return;
+      }
+
+      if (id6.length !== 6) {
+        msg.textContent = "请输入准确的6位字符";
+        return;
+      }
+
+      // 对应 img/身份证后6位.jpg 的确认表文件
+      var url = 'img/' + id6 + '.jpg';
+
+      // 先测试图片是否存在，存在再触发下载
+      var testImg = new Image();
+      testImg.onload = function() {
+        msg.textContent = "";
+        link.href = url;
+        link.download = id6 + '确认表.jpg';   // 下载文件名：身份证后6位.jpg
+        link.click();
+      };
+      testImg.onerror = function() {
+        msg.textContent = "未找到该身份证后6位对应的报名表（盖章版），请检查输入是否正确或联系老师。";
+      };
+      testImg.src = url + "?t=" + Date.now(); // 防缓存
+    }
+  </script>
+</body>
+</html>
